@@ -91,16 +91,17 @@
     border: 1px solid rgba(0,255,209,0.4);
     color: var(--cyan);
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    padding: 12px 28px;
+    padding: 10px 18px;
     cursor: none;
     transition: all 0.3s ease;
     position: relative;
     text-decoration: none;
     display: inline-block;
+    white-space: nowrap;
   }
   .nav-cta:hover {
     background: var(--cyan);
@@ -995,29 +996,150 @@
 
   /* Mobile */
   @media (max-width: 768px) {
-    nav { padding: 20px 24px; }
-    .hero-content { padding: 0 24px; }
-    .stats-inner { grid-template-columns: repeat(2, 1fr); padding: 0 24px; }
-    .stat-item { border-right: none; border-bottom: 1px solid var(--glass-border); padding: 20px 0; }
-    .stat-item:nth-child(odd) { border-right: 1px solid var(--glass-border); }
-    .diag-inner { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
-    .features-inner { padding: 0 24px; }
-    .features-grid { grid-template-columns: 1fr; }
-    .section-header { grid-template-columns: 1fr; gap: 20px; }
-    .pricing-inner { padding: 0 24px; }
-    .price-features { grid-template-columns: 1fr; }
-    .price-card { padding: 36px 24px; }
-    .test-inner { padding: 0 24px; }
-    .test-grid { grid-template-columns: 1fr; }
-    .fs-content { padding: 0 24px; }
-    .hero-scroll { right: 24px; }
-    footer { flex-direction: column; gap: 20px; text-align: center; padding: 32px 24px; }
-    .footer-links { flex-wrap: wrap; justify-content: center; }
-    .floating-cta { right: 24px; bottom: 24px; }
     body { cursor: auto; }
     .cursor, .cursor-ring { display: none; }
+    .hero-content { padding: 0 24px; }
+    .fs-content { padding: 0 24px; }
+    .hero-scroll { right: 24px; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--glass-border); padding: 20px 0; }
+    .stat-item:nth-child(odd) { border-right: 1px solid var(--glass-border); }
     .form-row { grid-template-columns: 1fr; }
   }
+
+  /* ===== MOBILE FIXES GLOBAIS ===== */
+  @media (max-width: 768px) {
+
+    /* Workshop section - 2 colunas → 1 coluna */
+    .diag-inner,
+    [style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 32px !important;
+    }
+
+    /* Bonus grid - 4 colunas → 2 colunas */
+    [style*="grid-template-columns:repeat(4,1fr)"] {
+      grid-template-columns: repeat(2,1fr) !important;
+    }
+
+    /* Features grid - 3 colunas → 1 coluna */
+    .features-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Pricing features - 2 colunas → 1 coluna */
+    .price-features {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Test grid - 3 colunas → 1 coluna */
+    .test-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Stats - 4 colunas → 2 colunas */
+    .stats-inner {
+      grid-template-columns: repeat(2,1fr) !important;
+      padding: 0 20px !important;
+    }
+
+    /* Section headers - 2 colunas → 1 coluna */
+    .section-header {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+    }
+
+    /* Padding geral das seções */
+    .features-inner,
+    .pricing-inner,
+    .test-inner,
+    [style*="padding:0 48px"] {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+
+    /* Resultados - 2 colunas → 1 coluna */
+    [style*="grid-template-columns:repeat(2,1fr);gap:2px"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Workshop protocol grid */
+    [style*="grid-template-columns:1fr 1fr;gap:2px"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Diag form padding */
+    .diag-form {
+      padding: 28px 20px !important;
+    }
+
+    /* Price card padding */
+    .price-card {
+      padding: 32px 20px !important;
+    }
+
+    /* Final CTA padding */
+    .final-content {
+      padding: 0 20px !important;
+    }
+
+    /* Footer */
+    footer {
+      flex-direction: column !important;
+      gap: 16px !important;
+      text-align: center !important;
+      padding: 28px 20px !important;
+    }
+    .footer-links {
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+    }
+
+    /* Floating CTA */
+    .floating-cta {
+      right: 16px !important;
+      bottom: 16px !important;
+    }
+    .floating-btn {
+      font-size: 11px !important;
+      padding: 12px 20px !important;
+    }
+
+    /* Títulos menores no mobile */
+    .hero-title { font-size: 56px !important; }
+    .section-title { font-size: 40px !important; }
+    .diag-title { font-size: 40px !important; }
+    .diag-title .free { font-size: 52px !important; }
+    .pricing-title { font-size: 44px !important; }
+    .test-title { font-size: 40px !important; }
+    .final-title { font-size: 48px !important; }
+
+    /* Phone section */
+    .phone-section-grid {
+      grid-template-columns: 1fr !important;
+      gap: 32px !important;
+      padding: 0 20px !important;
+    }
+    #phoneFrame {
+      width: 260px !important;
+      height: 520px !important;
+      margin: 0 auto !important;
+    }
+    #swipeCont { width: calc(260px * 5) !important; }
+    #swipeCont > div { width: 260px !important; min-width: 260px !important; }
+
+    /* Screen labels no mobile */
+    #screenLabels { display: none !important; }
+
+    /* Manifesto */
+    .manifesto-content h2 { font-size: 44px !important; }
+
+    /* Nav */
+    nav { padding: 16px 20px !important; }
+    .nav-cta { font-size: 10px !important; padding: 8px 12px !important; letter-spacing: 1px !important; white-space: nowrap !important; }
+    .nav-logo img { height: 34px !important; }
+    .nav-logo span[style] { font-size: 20px !important; }
+  }
+
 </style>
 
   <!-- Firebase SDK -->
@@ -1328,7 +1450,7 @@
 <!-- APP DEMO -->
 <section style="background:#050F0F;padding:120px 0;position:relative;overflow:hidden;min-height:auto;display:block;">
   <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(0,255,209,0.04) 0%,transparent 70%);pointer-events:none;"></div>
-  <div style="max-width:1200px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+  <div class="phone-section-grid" style="max-width:1200px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
 
     <!-- LEFT -->
     <div>
