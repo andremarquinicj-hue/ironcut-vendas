@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRONCUT — Admin Leads</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00FFD1;
+    --black: #050F0F;
+    --dark: #080E0E;
+    --card: #0d1a1a;
+    --border: rgba(0,255,209,0.12);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--black); color:#fff; font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+  /* LOGIN */
+  #login-screen {
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--black);
+  }
+  .login-box {
+    width:380px;
+    border:1px solid var(--border);
+    background:var(--card);
+    padding:48px 40px;
+    text-align:center;
+  }
+  .login-box img { height:56px; margin-bottom:24px; }
+  .login-box h1 { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:3px; margin-bottom:6px; }
+  .login-box p { font-size:13px; color:rgba(255,255,255,0.35); margin-bottom:32px; }
+  .login-input {
+    width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+    color:#fff; font-family:'DM Sans',sans-serif; font-size:14px; padding:13px 16px;
+    outline:none; margin-bottom:12px; transition:border-color 0.3s;
+  }
+  .login-input:focus { border-color:rgba(0,255,209,0.4); }
+  .login-btn {
+    width:100%; background:var(--cyan); color:var(--black); border:none;
+    font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; padding:14px; cursor:pointer;
+    transition:all 0.3s; margin-top:4px;
+  }
+  .login-btn:hover { background:#fff; }
+  .login-error { font-size:12px; color:rgba(255,100,100,0.8); margin-top:12px; display:none; }
+
+  /* ADMIN */
+  #admin-screen { display:none; }
+
+  /* TOPBAR */
+  .topbar {
+    background:var(--dark);
+    border-bottom:1px solid var(--border);
+    padding:16px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky; top:0; z-index:100;
+  }
+  .topbar-logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:4px; display:flex; align-items:center; gap:10px; }
+  .topbar-logo span { color:var(--cyan); }
+  .topbar-right { display:flex; align-items:center; gap:16px; }
+  .topbar-badge { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+  .logout-btn {
+    background:transparent; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.4);
+    font-family:'DM Sans',sans-serif; font-size:12px; padding:8px 16px; cursor:pointer;
+    transition:all 0.3s; letter-spacing:1px;
+  }
+  .logout-btn:hover { border-color:rgba(255,100,100,0.4); color:rgba(255,100,100,0.7); }
+
+  /* MAIN */
+  .main { max-width:1400px; margin:0 auto; padding:32px; }
+
+  /* STATS */
+  .stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:28px; }
+  .stat-card {
+    background:var(--card); border:1px solid var(--border); padding:20px 24px;
+    position:relative; overflow:hidden;
+  }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(to right,transparent,var(--cyan),transparent); opacity:0.5; }
+  .stat-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-bottom:8px; }
+  .stat-num { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--cyan); letter-spacing:2px; line-height:1; }
+  .stat-sub { font-size:11px; color:rgba(255,255,255,0.25); margin-top:4px; }
+
+  /* TOOLBAR */
+  .toolbar { display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .search-box {
+    flex:1; min-width:200px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+    color:#fff; font-family:'DM Sans',sans-serif; font-size:14px; padding:10px 16px; outline:none;
+    transition:border-color 0.3s;
+  }
+  .search-box:focus { border-color:rgba(0,255,209,0.3); }
+  .search-box::placeholder { color:rgba(255,255,255,0.2); }
+  .filter-select {
+    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+    color:#fff; font-family:'DM Sans',sans-serif; font-size:13px; padding:10px 14px;
+    outline:none; cursor:pointer; -webkit-appearance:none;
+  }
+  .filter-select option { background:#0d1a1a; }
+  .refresh-btn {
+    background:transparent; border:1px solid var(--border); color:var(--cyan);
+    font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; letter-spacing:1px;
+    text-transform:uppercase; padding:10px 20px; cursor:pointer; transition:all 0.3s;
+  }
+  .refresh-btn:hover { background:rgba(0,255,209,0.08); }
+  .export-btn {
+    background:var(--cyan); color:var(--black); border:none;
+    font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px;
+    text-transform:uppercase; padding:10px 20px; cursor:pointer; transition:all 0.3s;
+  }
+  .export-btn:hover { background:#fff; }
+
+  /* TABLE */
+  .table-wrap { background:var(--card); border:1px solid var(--border); overflow:hidden; }
+  .table-header {
+    display:grid;
+    grid-template-columns: 40px 160px 130px 90px 70px 70px 60px 110px 100px 80px 120px;
+    gap:0;
+    background:rgba(0,255,209,0.04);
+    border-bottom:1px solid var(--border);
+    padding:0;
+  }
+  .th {
+    font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    color:rgba(255,255,255,0.3); padding:14px 12px; font-weight:500;
+  }
+  .table-body { max-height:calc(100vh - 380px); overflow-y:auto; }
+  .table-row {
+    display:grid;
+    grid-template-columns: 40px 160px 130px 90px 70px 70px 60px 110px 100px 80px 120px;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    transition:background 0.2s;
+    align-items:center;
+  }
+  .table-row:hover { background:rgba(0,255,209,0.03); }
+  .td { font-size:13px; padding:14px 12px; color:rgba(255,255,255,0.75); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .td-num { font-family:'Bebas Neue',sans-serif; font-size:16px; color:rgba(255,255,255,0.2); }
+  .td-name { font-weight:500; color:#fff; }
+  .td-whats a { color:var(--cyan); text-decoration:none; font-size:12px; }
+  .td-whats a:hover { text-decoration:underline; }
+  .td-imc { font-weight:500; }
+
+  /* IMC colors */
+  .imc-baixo { color:#60a5fa; }
+  .imc-ideal { color:#00FFD1; }
+  .imc-sobre { color:#f97316; }
+  .imc-obeso { color:#f87171; }
+
+  /* Status badge */
+  .badge {
+    display:inline-block; font-size:10px; font-weight:600; letter-spacing:1px;
+    text-transform:uppercase; padding:4px 10px; border-radius:2px;
+  }
+  .badge-novo { background:rgba(0,255,209,0.1); color:var(--cyan); border:1px solid rgba(0,255,209,0.2); }
+  .badge-contatado { background:rgba(249,115,22,0.1); color:#f97316; border:1px solid rgba(249,115,22,0.2); }
+  .badge-convertido { background:rgba(34,197,94,0.1); color:#22c55e; border:1px solid rgba(34,197,94,0.2); }
+  .badge-perdido { background:rgba(248,113,113,0.1); color:#f87171; border:1px solid rgba(248,113,113,0.2); }
+
+  .status-select {
+    background:transparent; border:none; font-family:'DM Sans',sans-serif;
+    font-size:11px; color:inherit; cursor:pointer; outline:none; width:100%;
+  }
+  .status-select option { background:#0d1a1a; color:#fff; }
+
+  /* Empty state */
+  .empty-state { text-align:center; padding:64px 32px; }
+  .empty-state p { font-size:14px; color:rgba(255,255,255,0.25); }
+
+  /* Loading */
+  .loading { text-align:center; padding:48px; }
+  .spinner {
+    width:32px; height:32px; border:2px solid rgba(0,255,209,0.1);
+    border-top-color:var(--cyan); border-radius:50%;
+    animation:spin 0.8s linear infinite; margin:0 auto 16px;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* Detail modal */
+  .modal-bg {
+    position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200;
+    display:flex; align-items:center; justify-content:center;
+    backdrop-filter:blur(4px); display:none;
+  }
+  .modal {
+    background:var(--card); border:1px solid var(--border);
+    width:480px; max-width:90vw; padding:36px;
+    position:relative; max-height:90vh; overflow-y:auto;
+  }
+  .modal-close {
+    position:absolute; top:16px; right:16px;
+    background:transparent; border:none; color:rgba(255,255,255,0.3);
+    font-size:20px; cursor:pointer; transition:color 0.2s;
+  }
+  .modal-close:hover { color:#fff; }
+  .modal h2 { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; margin-bottom:20px; }
+  .modal-field { margin-bottom:14px; }
+  .modal-field label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.3); display:block; margin-bottom:4px; }
+  .modal-field p { font-size:14px; color:#fff; }
+  .modal-whats {
+    display:block; background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.25);
+    color:#25d366; font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
+    padding:14px; text-align:center; text-decoration:none; margin-top:20px;
+    transition:all 0.3s;
+  }
+  .modal-whats:hover { background:rgba(37,211,102,0.2); }
+  .imc-block {
+    background:rgba(0,255,209,0.04); border:1px solid var(--border);
+    padding:16px; margin:16px 0; display:flex; align-items:center; justify-content:space-between;
+  }
+
+  /* Scrollbar */
+  .table-body::-webkit-scrollbar { width:4px; }
+  .table-body::-webkit-scrollbar-track { background:transparent; }
+  .table-body::-webkit-scrollbar-thumb { background:rgba(0,255,209,0.2); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>IRONCUT</h1>
+    <p>Painel de Leads — Acesso Restrito</p>
+    <input class="login-input" type="password" id="senha-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')fazerLogin()">
+    <button class="login-btn" onclick="fazerLogin()">ENTRAR</button>
+    <p class="login-error" id="login-erro">Senha incorreta. Tente novamente.</p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <div class="topbar">
+    <div class="topbar-logo"><span>11</span> IRONCUT <span style="font-size:13px;color:rgba(255,255,255,0.3);letter-spacing:2px;font-family:'DM Sans',sans-serif;font-weight:300;">LEADS</span></div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="last-update">Carregando...</span>
+      <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total de Leads</div>
+        <div class="stat-num" id="s-total">—</div>
+        <div class="stat-sub">desde o início</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Novos</div>
+        <div class="stat-num" id="s-novos" style="color:#00FFD1;">—</div>
+        <div class="stat-sub">aguardando contato</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Contatados</div>
+        <div class="stat-num" id="s-cont" style="color:#f97316;">—</div>
+        <div class="stat-sub">em negociação</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Convertidos</div>
+        <div class="stat-num" id="s-conv" style="color:#22c55e;">—</div>
+        <div class="stat-sub">compraram o plano</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Taxa de Conversão</div>
+        <div class="stat-num" id="s-taxa" style="color:#a78bfa;">—</div>
+        <div class="stat-sub">convertidos / total</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input class="search-box" type="text" id="search-input" placeholder="Buscar por nome ou WhatsApp..." oninput="renderTabela()">
+      <select class="filter-select" id="filter-status" onchange="renderTabela()">
+        <option value="">Todos os status</option>
+        <option value="novo">Novo</option>
+        <option value="contatado">Contatado</option>
+        <option value="convertido">Convertido</option>
+        <option value="perdido">Perdido</option>
+      </select>
+      <select class="filter-select" id="filter-obj" onchange="renderTabela()">
+        <option value="">Todos objetivos</option>
+        <option value="Emagrecer">Emagrecer</option>
+        <option value="Ganhar massa">Ganhar massa</option>
+        <option value="Definir o corpo">Definir o corpo</option>
+        <option value="Melhorar saúde">Melhorar saúde</option>
+      </select>
+      <button class="refresh-btn" onclick="carregarLeads()">↻ Atualizar</button>
+      <button class="export-btn" onclick="exportarCSV()">↓ Exportar CSV</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="th">#</div>
+        <div class="th">Nome</div>
+        <div class="th">WhatsApp</div>
+        <div class="th">Objetivo</div>
+        <div class="th">Peso</div>
+        <div class="th">Altura</div>
+        <div class="th">IMC</div>
+        <div class="th">Nível</div>
+        <div class="th">Data</div>
+        <div class="th">Status</div>
+        <div class="th">Ação</div>
+      </div>
+      <div class="table-body" id="table-body">
+        <div class="loading"><div class="spinner"></div><p style="font-size:13px;color:rgba(255,255,255,0.3);">Carregando leads...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE -->
+<div class="modal-bg" id="modal-bg" onclick="fecharModal(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal-bg').style.display='none'">✕</button>
+    <h2 id="m-nome">—</h2>
+    <div class="imc-block">
+      <div><p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">IMC</p><p id="m-imc" style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#00FFD1;letter-spacing:2px;">—</p></div>
+      <div style="text-align:right;"><p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Composição</p><p id="m-comp" style="font-size:14px;color:rgba(255,255,255,0.6);">—</p></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="modal-field"><label>WhatsApp</label><p id="m-whats">—</p></div>
+      <div class="modal-field"><label>Data do lead</label><p id="m-data">—</p></div>
+      <div class="modal-field"><label>Objetivo</label><p id="m-obj">—</p></div>
+      <div class="modal-field"><label>Nível de treino</label><p id="m-nivel">—</p></div>
+      <div class="modal-field"><label>Peso</label><p id="m-peso">—</p></div>
+      <div class="modal-field"><label>Altura</label><p id="m-alt">—</p></div>
+    </div>
+    <a id="m-link" href="#" target="_blank" class="modal-whats">💬 Abrir WhatsApp</a>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAUIoV7tDLGwDQy0NVqZq0bYjJJfOAPIJU",
+    authDomain: "ironcut-21d.firebaseapp.com",
+    projectId: "ironcut-21d",
+    storageBucket: "ironcut-21d.firebasestorage.app",
+    messagingSenderId: "991217655866",
+    appId: "1:991217655866:web:32cf3efa7fc4f6f1439503"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const SENHA = "ironcut2026";
+  let todosLeads = [];
+  let leadsFiltrados = [];
+
+  window.fazerLogin = function() {
+    var s = document.getElementById('senha-input').value;
+    if (s === SENHA) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-screen').style.display = 'block';
+      carregarLeads();
+    } else {
+      document.getElementById('login-erro').style.display = 'block';
+    }
+  };
+
+  window.fazerLogout = function() {
+    document.getElementById('admin-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('senha-input').value = '';
+  };
+
+  window.carregarLeads = async function() {
+    document.getElementById('table-body').innerHTML = '<div class="loading"><div class="spinner"></div><p style="font-size:13px;color:rgba(255,255,255,0.3);">Carregando leads...</p></div>';
+    try {
+      const q = query(collection(db, "leads-diagnostico"), orderBy("timestamp", "desc"));
+      const snap = await getDocs(q);
+      todosLeads = [];
+      snap.forEach(d => todosLeads.push({ id: d.id, ...d.data() }));
+      atualizarStats();
+      renderTabela();
+      var now = new Date();
+      document.getElementById('last-update').textContent = 'Atualizado às ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+    } catch(e) {
+      document.getElementById('table-body').innerHTML = '<div class="empty-state"><p>Erro ao carregar leads. Verifique as regras do Firestore.</p></div>';
+    }
+  };
+
+  function atualizarStats() {
+    var total = todosLeads.length;
+    var novos = todosLeads.filter(l => !l.status || l.status === 'novo').length;
+    var cont = todosLeads.filter(l => l.status === 'contatado').length;
+    var conv = todosLeads.filter(l => l.status === 'convertido').length;
+    var taxa = total > 0 ? Math.round((conv/total)*100) + '%' : '0%';
+    document.getElementById('s-total').textContent = total;
+    document.getElementById('s-novos').textContent = novos;
+    document.getElementById('s-cont').textContent = cont;
+    document.getElementById('s-conv').textContent = conv;
+    document.getElementById('s-taxa').textContent = taxa;
+  }
+
+  window.renderTabela = function() {
+    var busca = document.getElementById('search-input').value.toLowerCase();
+    var fStatus = document.getElementById('filter-status').value;
+    var fObj = document.getElementById('filter-obj').value;
+
+    leadsFiltrados = todosLeads.filter(l => {
+      var matchBusca = !busca || (l.nome||'').toLowerCase().includes(busca) || (l.whatsapp||'').includes(busca);
+      var matchStatus = !fStatus || (l.status||'novo') === fStatus;
+      var matchObj = !fObj || l.objetivo === fObj;
+      return matchBusca && matchStatus && matchObj;
+    });
+
+    if (leadsFiltrados.length === 0) {
+      document.getElementById('table-body').innerHTML = '<div class="empty-state"><p>Nenhum lead encontrado com esses filtros.</p></div>';
+      return;
+    }
+
+    var html = '';
+    leadsFiltrados.forEach(function(l, i) {
+      var status = l.status || 'novo';
+      var imc = parseFloat(l.imc) || 0;
+      var imcClass = imc < 18.5 ? 'imc-baixo' : imc < 25 ? 'imc-ideal' : imc < 30 ? 'imc-sobre' : 'imc-obeso';
+      var data = l.timestamp ? new Date(l.timestamp.seconds*1000).toLocaleDateString('pt-BR') : '—';
+      var fone = (l.whatsapp||'').replace(/\D/g,'');
+      var msg = encodeURIComponent('Olá ' + (l.nome||'') + '! Vi que você fez o diagnóstico no IRONCUT. Gostaria de te apresentar o plano personalizado para ' + (l.objetivo||'seu objetivo') + '. Posso te ajudar?');
+      var waLink = 'https://wa.me/55' + fone + '?text=' + msg;
+
+      html += '<div class="table-row" style="cursor:pointer;" ondblclick="abrirModal(\'' + l.id + '\')">';
+      html += '<div class="td td-num">' + (i+1) + '</div>';
+      html += '<div class="td td-name" title="' + (l.nome||'') + '">' + (l.nome||'—') + '</div>';
+      html += '<div class="td td-whats"><a href="' + waLink + '" target="_blank" onclick="event.stopPropagation()" title="Abrir WhatsApp">📱 ' + (l.whatsapp||'—') + '</a></div>';
+      html += '<div class="td" title="' + (l.objetivo||'') + '" style="font-size:12px;">' + (l.objetivo||'—') + '</div>';
+      html += '<div class="td">' + (l.peso_kg ? l.peso_kg + 'kg' : '—') + '</div>';
+      html += '<div class="td">' + (l.altura_cm ? l.altura_cm + 'cm' : '—') + '</div>';
+      html += '<div class="td td-imc ' + imcClass + '">' + (l.imc || '—') + '</div>';
+      html += '<div class="td" style="font-size:12px;">' + (l.nivel||'—') + '</div>';
+      html += '<div class="td" style="font-size:12px;">' + data + '</div>';
+      html += '<div class="td"><select class="status-select badge badge-' + status + '" onchange="mudarStatus(\'' + l.id + '\',this)" onclick="event.stopPropagation()">';
+      ['novo','contatado','convertido','perdido'].forEach(function(s) {
+        html += '<option value="' + s + '"' + (s===status?' selected':'') + '>' + s.charAt(0).toUpperCase()+s.slice(1) + '</option>';
+      });
+      html += '</select></div>';
+      html += '<div class="td"><a href="' + waLink + '" target="_blank" onclick="event.stopPropagation()" style="background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);color:#25d366;font-size:11px;font-weight:600;padding:6px 12px;text-decoration:none;letter-spacing:1px;white-space:nowrap;">💬 WPP</a></div>';
+      html += '</div>';
+    });
+    document.getElementById('table-body').innerHTML = html;
+  };
+
+  window.mudarStatus = async function(id, sel) {
+    var novoStatus = sel.value;
+    sel.className = 'status-select badge badge-' + novoStatus;
+    try {
+      await updateDoc(doc(db, "leads-diagnostico", id), { status: novoStatus });
+      var lead = todosLeads.find(l => l.id === id);
+      if (lead) lead.status = novoStatus;
+      atualizarStats();
+    } catch(e) { console.error(e); }
+  };
+
+  window.abrirModal = function(id) {
+    var l = todosLeads.find(x => x.id === id);
+    if (!l) return;
+    var imc = parseFloat(l.imc) || 0;
+    var cat = imc < 18.5 ? 'Abaixo do peso' : imc < 25 ? 'Peso ideal ✓' : imc < 30 ? 'Sobrepeso' : 'Obesidade';
+    var fone = (l.whatsapp||'').replace(/\D/g,'');
+    var msg = encodeURIComponent('Olá ' + (l.nome||'') + '! Vi que você fez o diagnóstico no IRONCUT. Gostaria de te apresentar o plano personalizado para ' + (l.objetivo||'seu objetivo') + '. Posso te ajudar?');
+    document.getElementById('m-nome').textContent = l.nome || '—';
+    document.getElementById('m-imc').textContent = l.imc || '—';
+    document.getElementById('m-comp').textContent = cat + ' · ' + (l.peso_kg||'—') + 'kg / ' + (l.altura_cm||'—') + 'cm';
+    document.getElementById('m-whats').textContent = l.whatsapp || '—';
+    document.getElementById('m-data').textContent = l.timestamp ? new Date(l.timestamp.seconds*1000).toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    document.getElementById('m-obj').textContent = l.objetivo || '—';
+    document.getElementById('m-nivel').textContent = l.nivel || '—';
+    document.getElementById('m-peso').textContent = l.peso_kg ? l.peso_kg + ' kg' : '—';
+    document.getElementById('m-alt').textContent = l.altura_cm ? l.altura_cm + ' cm' : '—';
+    document.getElementById('m-link').href = 'https://wa.me/55' + fone + '?text=' + msg;
+    document.getElementById('modal-bg').style.display = 'flex';
+  };
+
+  window.fecharModal = function(e) {
+    if (e.target === document.getElementById('modal-bg')) document.getElementById('modal-bg').style.display = 'none';
+  };
+
+  window.exportarCSV = function() {
+    var rows = [['Nome','WhatsApp','Objetivo','Nivel','Peso(kg)','Altura(cm)','IMC','Status','Data']];
+    leadsFiltrados.forEach(function(l) {
+      var data = l.timestamp ? new Date(l.timestamp.seconds*1000).toLocaleDateString('pt-BR') : '';
+      rows.push([l.nome||'',l.whatsapp||'',l.objetivo||'',l.nivel||'',l.peso_kg||'',l.altura_cm||'',l.imc||'',l.status||'novo',data]);
+    });
+    var csv = rows.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+    var blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ironcut-leads-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+  };
+</script>
+</body>
+</html>
