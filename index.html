@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IRONCUT — Seu Corpo. Sua Transformação.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -173,11 +172,20 @@
     line-height: 0.9;
     letter-spacing: 2px;
     margin-bottom: 32px;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.9s ease 0.4s;
   }
-  .hero-title span { color: var(--cyan); display: block; }
+  .hero-title .accent-cyan { color: var(--cyan); }
+  .hero-title .line-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+  }
+  .hero-title .line-inner {
+    display: block;
+    transform: translateY(115%);
+    transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hero.visible .line-mask:nth-child(1) .line-inner { transform: translateY(0); transition-delay: 0.35s; }
+  .hero.visible .line-mask:nth-child(2) .line-inner { transform: translateY(0); transition-delay: 0.5s; }
   .hero-sub {
     font-size: 17px;
     font-weight: 300;
@@ -267,7 +275,6 @@
 
   /* ANIMATE IN */
   .hero.visible .hero-eyebrow,
-  .hero.visible .hero-title,
   .hero.visible .hero-sub,
   .hero.visible .hero-actions {
     opacity: 1;
@@ -995,6 +1002,188 @@
   /* SECTION IMAGES */
   .s1-bg { background-image: url('img1'); }
 
+  /* ============================================
+     FX PACK — PRELOADER / MARQUEE / PROGRESS / TILT
+     ============================================ */
+
+  /* PRELOADER */
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+  }
+  .preloader-panel {
+    position: absolute;
+    top: 0;
+    width: 50.5%;
+    height: 100%;
+    background: var(--black);
+    transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  .preloader-panel.left  { left: 0; border-right: 1px solid rgba(0,255,209,0.15); }
+  .preloader-panel.right { right: 0; }
+  .preloader.done .preloader-panel.left  { transform: translateX(-101%); }
+  .preloader.done .preloader-panel.right { transform: translateX(101%); }
+  .preloader-center {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .preloader.done .preloader-center { opacity: 0; transform: scale(0.95); }
+  .preloader.done { pointer-events: none; }
+  .preloader-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    letter-spacing: 8px;
+    color: #fff;
+  }
+  .preloader-logo .slash { color: var(--cyan); }
+  .preloader-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 4px;
+    color: var(--cyan);
+    margin-top: 14px;
+    opacity: 0.85;
+  }
+  .preloader-bar {
+    width: 180px;
+    height: 1px;
+    background: rgba(0,255,209,0.15);
+    margin: 18px auto 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .preloader-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: var(--load, 0%);
+    background: var(--cyan);
+    box-shadow: 0 0 12px rgba(0,255,209,0.8);
+    transition: width 0.2s ease;
+  }
+
+  /* SCROLL PROGRESS */
+  .scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(to right, var(--cyan-dim), var(--cyan));
+    box-shadow: 0 0 10px rgba(0,255,209,0.6);
+    z-index: 9000;
+    pointer-events: none;
+  }
+
+  /* MARQUEE */
+  .marquee {
+    background: var(--black);
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
+    overflow: hidden;
+    padding: 22px 0;
+    position: relative;
+    min-height: auto;
+    display: block;
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marqueeScroll 28s linear infinite;
+    will-change: transform;
+  }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 56px;
+  }
+  .marquee-item .mq-sep { color: var(--cyan); font-size: 22px; }
+  .marquee-item .mq-ghost {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,255,209,0.5);
+  }
+  @keyframes marqueeScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* GRAIN OVERLAY */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    z-index: 8000;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grainShift 7s steps(8) infinite;
+  }
+  @keyframes grainShift {
+    0%,100% { transform: translate(0,0); }
+    25% { transform: translate(-2%,3%); }
+    50% { transform: translate(3%,-2%); }
+    75% { transform: translate(-3%,-3%); }
+  }
+
+  /* GLOW ORB ambiente no hero */
+  .hero-orb {
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,209,0.12) 0%, transparent 65%);
+    filter: blur(20px);
+    z-index: 1;
+    pointer-events: none;
+    animation: orbFloat 9s ease-in-out infinite alternate;
+  }
+  @keyframes orbFloat {
+    from { transform: translate(-8%, -4%) scale(1); }
+    to   { transform: translate(10%, 8%) scale(1.15); }
+  }
+
+  /* TILT 3D */
+  .feature-card, .test-card {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .tilt-active { transition: transform 0.15s ease-out !important; }
+  .tilt-reset  { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1) !important; }
+
+  /* MAGNETIC */
+  .magnetic { display: inline-block; transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); }
+
+  /* STAT GLOW ao contar */
+  .stat-num.counting { text-shadow: 0 0 24px rgba(0,255,209,0.55); }
+
+  /* REDUCED MOTION */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+    .grain, .hero-orb { animation: none; }
+    .preloader { display: none; }
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+
+  @media (max-width: 768px) {
+    .marquee-item { font-size: 22px; gap: 32px; padding: 0 16px; }
+    .hero-orb { width: 300px; height: 300px; }
+  }
+
   /* Mobile */
   @media (max-width: 768px) {
     body { cursor: auto; }
@@ -1189,6 +1378,23 @@
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
+<!-- PRELOADER -->
+<div class="preloader" id="preloader">
+  <div class="preloader-panel left"></div>
+  <div class="preloader-panel right"></div>
+  <div class="preloader-center">
+    <div class="preloader-logo">IRON<span class="slash">/</span>CUT</div>
+    <div class="preloader-count" id="preCount">0%</div>
+    <div class="preloader-bar" id="preBar"></div>
+  </div>
+</div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- GRAIN -->
+<div class="grain"></div>
+
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
@@ -1200,12 +1406,13 @@
 <section class="hero" id="hero">
   <div class="hero-bg" id="heroBg" style="background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1800&q=80')"></div>
   <div class="hero-overlay"></div>
+  <div class="hero-orb" style="top:10%;right:8%;"></div>
   <div class="neon-line"></div>
   <div class="hero-content">
-    <p class="hero-eyebrow">Tecnologia · Ciência · Resultado</p>
+    <p class="hero-eyebrow" id="heroEyebrow" data-text="Tecnologia · Ciência · Resultado">Tecnologia · Ciência · Resultado</p>
     <h1 class="hero-title">
-      SEU CORPO<br>
-      <span>REDEFINIDO.</span>
+      <span class="line-mask"><span class="line-inner">SEU CORPO</span></span>
+      <span class="line-mask"><span class="line-inner accent-cyan">REDEFINIDO.</span></span>
     </h1>
     <p class="hero-sub">Treino com IA. Nutrição personalizada. Acompanhamento em tempo real. Tudo que você precisa para transformar seu corpo — em um único app.</p>
     <div class="hero-actions">
@@ -1224,6 +1431,19 @@
   </div>
 </section>
 
+
+<!-- MARQUEE -->
+<section class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item">
+      <span>PROTOCOLO 21 DIAS</span><span class="mq-sep">◆</span>
+      <span class="mq-ghost">TREINO COM IA</span><span class="mq-sep">◆</span>
+      <span>NUTRIÇÃO PERSONALIZADA</span><span class="mq-sep">◆</span>
+      <span class="mq-ghost">RESULTADO REAL</span><span class="mq-sep">◆</span>
+      <span>IRONCUT</span><span class="mq-sep">◆</span>
+    </div>
+  </div>
+</section>
 
 <!-- MANIFESTO -->
 <section style="
@@ -1891,7 +2111,7 @@
         <li>Checklist Diário IRONCUT</li>
         <li>Atualizações Gratuitas</li>
       </ul>
-     <a href="https://pay.kiwify.com.br/DqjU8H4" target="_blank" rel="noreferrer noopener" class="btn-primary" style="display: block; text-align: center;">COMEÇAR AGORA POR R$99,90</a>
+      <a href="https://pay.kiwify.com.br/DqjU8H4" target="_blank" rel="noopener noreferrer" class="btn-primary" style="display: block; text-align: center;">COMEÇAR AGORA POR R$99,90</a>
       <p class="price-guarantee">✓ 7 dias de garantia · ✓ Cancele quando quiser · ✓ Sem mensalidade oculta</p>
     </div>
   </div>
@@ -2095,10 +2315,156 @@
   }, { threshold: 0.3 });
   document.querySelectorAll('.manifesto-content').forEach(el => manifestoObserver.observe(el));
 
-  // Hero animate in
-  setTimeout(() => {
+  // ============================================
+  // FX PACK — PRELOADER / SCRAMBLE / COUNTERS / MAGNETIC / TILT
+  // ============================================
+
+  // Preloader com contador
+  const preloader = document.getElementById('preloader');
+  const preCount = document.getElementById('preCount');
+  const preBar = document.getElementById('preBar');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function startHero() {
     document.getElementById('hero').classList.add('visible');
-  }, 100);
+    scrambleEyebrow();
+  }
+
+  if (reducedMotion || !preloader) {
+    if (preloader) preloader.style.display = 'none';
+    startHero();
+  } else {
+    document.body.style.overflow = 'hidden';
+    let load = 0;
+    const loadInterval = setInterval(() => {
+      load += Math.floor(Math.random() * 14) + 4;
+      if (load >= 100) {
+        load = 100;
+        clearInterval(loadInterval);
+        preCount.textContent = '100%';
+        preBar.style.setProperty('--load', '100%');
+        setTimeout(() => {
+          preloader.classList.add('done');
+          document.body.style.overflow = '';
+          setTimeout(startHero, 350);
+          setTimeout(() => preloader.remove(), 1200);
+        }, 300);
+      } else {
+        preCount.textContent = load + '%';
+        preBar.style.setProperty('--load', load + '%');
+      }
+    }, 110);
+  }
+
+  // Scramble/decode no eyebrow
+  function scrambleEyebrow() {
+    const el = document.getElementById('heroEyebrow');
+    if (!el || reducedMotion) return;
+    const target = el.dataset.text;
+    const chars = '!<>-_\\/[]{}—=+*^?#';
+    let frame = 0;
+    const total = 36;
+    const timer = setInterval(() => {
+      frame++;
+      const progress = frame / total;
+      let out = '';
+      for (let i = 0; i < target.length; i++) {
+        if (i < target.length * progress) out += target[i];
+        else if (target[i] === ' ' || target[i] === '·') out += target[i];
+        else out += chars[Math.floor(Math.random() * chars.length)];
+      }
+      el.textContent = out;
+      if (frame >= total) { clearInterval(timer); el.textContent = target; }
+    }, 38);
+  }
+
+  // Duplica trilha do marquee para loop infinito
+  const mqTrack = document.getElementById('marqueeTrack');
+  if (mqTrack) mqTrack.innerHTML += mqTrack.innerHTML;
+
+  // Scroll progress bar
+  const scrollProgress = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress.style.width = (window.scrollY / h * 100) + '%';
+  }, { passive: true });
+
+  // Counters animados nos stats
+  function animateCounter(numEl) {
+    const raw = numEl.textContent.trim();
+    const match = raw.match(/^(\d+)(.*)$/);
+    if (!match || numEl.dataset.counted) return;
+    numEl.dataset.counted = '1';
+    const target = parseInt(match[1], 10);
+    const suffix = match[2] || '';
+    const dur = 1400;
+    const start = performance.now();
+    numEl.classList.add('counting');
+    function tick(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      numEl.textContent = Math.round(target * eased) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+      else setTimeout(() => numEl.classList.remove('counting'), 600);
+    }
+    if (reducedMotion) { numEl.textContent = target + suffix; return; }
+    requestAnimationFrame(tick);
+  }
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const num = e.target.querySelector('.stat-num');
+        if (num) animateCounter(num);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-item').forEach(el => statObserver.observe(el));
+
+  // Botões magnéticos
+  if (!reducedMotion && window.matchMedia('(pointer: fine)').matches) {
+    document.querySelectorAll('.btn-primary, .nav-cta, .btn-submit, .floating-btn').forEach(btn => {
+      btn.classList.add('magnetic');
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        btn.style.transform = `translate(${x * 0.25}px, ${y * 0.35}px)`;
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    });
+
+    // Tilt 3D nos cards
+    document.querySelectorAll('.feature-card, .test-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.classList.add('tilt-active');
+        card.classList.remove('tilt-reset');
+        card.style.transform = `perspective(900px) rotateX(${py * -7}deg) rotateY(${px * 9}deg) translateY(-4px)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.classList.remove('tilt-active');
+        card.classList.add('tilt-reset');
+        card.style.transform = '';
+      });
+    });
+
+    // Parallax do mouse no hero (orb + conteúdo; bg mantém o Ken Burns)
+    const heroSection = document.getElementById('hero');
+    const heroOrb = heroSection.querySelector('.hero-orb');
+    const heroContent = heroSection.querySelector('.hero-content');
+    heroSection.addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth - 0.5);
+      const y = (e.clientY / window.innerHeight - 0.5);
+      if (heroOrb) heroOrb.style.translate = `${x * 50}px ${y * 36}px`;
+      heroContent.style.translate = `${x * -10}px ${y * -6}px`;
+    });
+    heroSection.addEventListener('mouseleave', () => {
+      if (heroOrb) heroOrb.style.translate = '';
+      heroContent.style.translate = '';
+    });
+  }
 
   // Hero BG loaded
   const heroBg = document.getElementById('heroBg');
