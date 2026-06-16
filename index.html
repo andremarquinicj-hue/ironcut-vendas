@@ -1559,6 +1559,30 @@ src="https://www.facebook.com/tr?id=1603996997852371&ev=PageView&noscript=1"
     .nav-cta { font-size: 10px !important; padding: 8px 12px !important; letter-spacing: 1px !important; white-space: nowrap !important; }
     .nav-logo img { height: 34px !important; }
     .nav-logo span[style] { font-size: 20px !important; }
+
+    /* === PLANOS MOBILE — 3 colunas → 1 coluna === */
+    [style*="grid-template-columns:1fr 1.08fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 20px !important;
+    }
+
+    /* Remover elevação do card destaque no mobile */
+    [style*="transform:translateY(-8px)"] {
+      transform: none !important;
+    }
+
+    /* Padding interno dos cards no mobile */
+    #planos [style*="padding:52px 40px"],
+    #planos [style*="padding:44px 36px"] {
+      padding: 32px 24px !important;
+    }
+
+    /* Tarja de lançamento no mobile */
+    #planos > div > [style*="max-width:600px"] {
+      padding: 12px 16px !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
   }
 
 </style>
